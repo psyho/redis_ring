@@ -1,0 +1,50 @@
+daemonize no
+
+port <%= port %>
+logfile <%= log_file %>
+dir <%= working_directory %>
+vm-swap-file <%= vm_swap_file %>
+vm-max-memory <%= vm_max_memory %>
+vm-pages <%= vm_pages %>
+# slaveof <masterip> <masterport>
+<% if password %>
+  requirepass <%= password %>
+<% end %>
+
+timeout 300
+
+loglevel notice
+
+databases 2048
+
+save 900 1
+save 300 10
+save 60 10000
+
+rdbcompression yes
+
+dbfilename dump.rdb
+
+# maxclients 128
+# maxmemory <bytes>
+
+appendonly no
+
+# The name of the append only file (default: "appendonly.aof")
+appendfilename appendonly.aof
+
+# appendfsync always
+appendfsync everysec
+# appendfsync no
+
+vm-enabled yes
+vm-page-size 32
+vm-max-threads 4
+
+glueoutputbuf yes
+hash-max-zipmap-entries 64
+hash-max-zipmap-value 512
+
+activerehashing yes
+
+# include /path/to/other.conf
