@@ -7,8 +7,6 @@ describe RedisRing::ShardConfig do
 
     redis_conf = shard_config.render
 
-    puts redis_conf
-
     redis_conf.should include((config.base_port + 1).to_s)
     redis_conf.should include(config.base_directory)
   end

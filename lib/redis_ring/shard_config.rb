@@ -15,25 +15,35 @@ module RedisRing
     end
 
     def save
-      FileUtils.mkdir_p(configuration.base_directory)
+      FileUtils.mkdir_p(working_directory)
 
-      ['configs', 'logs', 'vm_files', 'db_files', working_directory].each do |dir_name|
+      ['configs', 'logs', 'vm_files', 'db_files'].each do |dir_name|
         FileUtils.mkdir_p(File.join(configuration.base_directory, dir_name))
       end
 
-      File.write(config_file_name, render)
+      FileUtils.touch(common_config_path) unless File.exist?(common_config_path)
+
+      File.open(config_file_name, 'w') { |f| f.write(render) }
     end
 
     def config_file_name
       File.join(configuration.base_directory, 'configs', "shard-#{shard_number}.conf")
     end
 
+    def host
+      configuration.host_name
+    end
+
     def port
       configuration.base_port + shard_number + 1
     end
 
+    def redis_path
+      configuration.redis_path
+    end
+
     def log_file
-      file('logs', "shard-#{shard_number}.log")
+      File.expand_path(file('logs', "shard-#{shard_number}.log"), working_directory)
     end
 
     def working_directory
@@ -69,7 +79,7 @@ module RedisRing
     end
 
     def common_config_path
-      "shared_config.conf"
+      File.join(configuration.base_directory, "shared_config.conf")
     end
 
     protected

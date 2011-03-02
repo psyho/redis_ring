@@ -6,6 +6,7 @@ dir <%= working_directory %>
 vm-swap-file <%= vm_swap_file %>
 vm-max-memory <%= vm_max_memory %>
 vm-pages <%= vm_pages %>
+vm-page-size <%= vm_page_size %>
 dbfilename <%= db_file_name %>
 appendfilename <%= aof_file_name %>
 # slaveof <masterip> <masterport>
@@ -37,7 +38,6 @@ appendfsync everysec
 # appendfsync no
 
 vm-enabled yes
-vm-page-size <% vm_page_size %>
 vm-max-threads 4
 
 glueoutputbuf yes
