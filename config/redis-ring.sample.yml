@@ -1,0 +1,32 @@
+# By default RedisRing tries to guess the local IP address
+# setting host_name should be necessary only if that is not possible
+#host_name: localhost
+
+# This is the port on which RedisRing publishes it's HTTP interface
+# The Redis instances use ring_size next ports
+base_port: 6400
+
+# The number of Redis instances to start. Morte means more memory overhead (about 1MB per instance),
+# but more means also easier moving around parts of the database
+ring_size: 32
+
+# By default which redis-server is used. Overwrite this setting if redis-server is not in PATH
+#redis_path: /path/to/redis-server
+
+# By default config/redis.conf.erb from the gem is used, but you can also supply your own.
+# You can also change the redis server settings using the shared_config.conf file in base directory
+#redis_config_template_path: /path/to/redis.conf.erb
+
+# You can specify how much should Virtual Memory take in bytes (overall, not per Redis instance)
+total_vm_size: 8589934592 #8GB
+vm_page_size: 32
+
+# This is the root directory under which all files will be stored
+base_directory: /var/lib/redis
+
+# Like with Virtual Memory, you can also specify how much memory all the Redis instances should take together
+total_max_memory: 1073741824 # 1GB
+
+# This is the password that will be used by all Redis instances. Remember that a huge number of passwords can be
+# chacked in a second, so use a strong one. By default there is no password.
+#password: letmein
