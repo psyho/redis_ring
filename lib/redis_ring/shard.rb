@@ -45,7 +45,7 @@ module RedisRing
     protected
 
     def alive?
-      @pid && system("ps -p #{@pid} > /dev/null")
+      @pid && File.exist?("/proc/#{@pid}")
     end
 
     def fork_redis_server
