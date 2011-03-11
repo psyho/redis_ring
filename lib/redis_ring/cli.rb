@@ -46,6 +46,8 @@ USAGE
       Application.instance.start
 
       WebInterface.run!(:port => config.base_port)
+
+      Application.instance.stop
     end
 
   end

@@ -4,7 +4,7 @@ describe RedisRing::Application do
 
   describe "#shards_hash" do
     before(:each) do
-      RedisRing::Shard.any_instance.stubs(:fork_redis_server => 123)
+      RedisRing::Shard.any_instance.stubs(:fork_redis_server => stub(:start => true, :stop => true, :running? => true))
       RedisRing::ShardConfig.any_instance.stubs(:save)
       RedisRing::ShardConfig.any_instance.stubs(:alive? => true)
 

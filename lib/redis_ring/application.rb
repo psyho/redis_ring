@@ -2,10 +2,11 @@ module RedisRing
 
   class Application
 
-    attr_reader :shards, :configuration
+    attr_reader :shards, :configuration, :process_manager
 
     def initialize(configuration)
       @configuration = configuration
+      @process_manager = ProcessManager.new
       @shards = {}
     end
 
@@ -18,14 +19,19 @@ module RedisRing
       end
 
       @shards.each do |shard_no, shard|
-        shard.start
+        @process_manager.start_shard(shard)
       end
+
+      @process_manager.run
     end
 
     def stop
+      @process_manager.halt
+
       @shards.each do |shard_no, shard|
-        shard.stop
+        @process_manager.stop_shard(shard)
       end
+
       @shards = {}
     end
 

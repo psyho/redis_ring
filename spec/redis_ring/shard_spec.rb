@@ -5,9 +5,9 @@ describe RedisRing::Shard do
   describe "possible statuses" do
     before(:each) do
       @shard = RedisRing::Shard.new(RedisRing::ShardConfig.new(0, RedisRing::Configuration.new))
-      @pid = 123
+      @task = stub(:start => true, :stop => true)
       @shard.shard_config.stubs(:save)
-      @shard.stubs(:fork_redis_server => @pid)
+      @shard.stubs(:fork_redis_server => @task)
       @shard.stubs(:send_kill_signal)
     end
 
@@ -16,14 +16,14 @@ describe RedisRing::Shard do
     end
 
     it "should be running if started and alive" do
-      @shard.stubs(:alive? => true)
+      @task.stubs(:running? => true)
       @shard.start
 
       @shard.status.should == :running
     end
 
     it "should be stopping if started then stopped but still alive" do
-      @shard.stubs(:alive? => true)
+      @task.stubs(:running? => true)
       @shard.start
       @shard.stop
 
@@ -31,7 +31,7 @@ describe RedisRing::Shard do
     end
 
     it "should be stopped if started then stopped and not alive" do
-      @shard.stubs(:alive? => false)
+      @task.stubs(:running? => false)
       @shard.start
       @shard.stop
 
@@ -39,7 +39,7 @@ describe RedisRing::Shard do
     end
 
     it "should be dead if started but not alive" do
-      @shard.stubs(:alive? => false)
+      @task.stubs(:running? => false)
       @shard.start
 
       @shard.status.should == :dead

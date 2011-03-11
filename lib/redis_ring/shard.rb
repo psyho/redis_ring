@@ -32,28 +32,30 @@ module RedisRing
     end
 
     def start
-      shard_config.save
-      @pid = fork_redis_server
-      @status = :started
+      if @status == :started
+        @task.start unless @task.running?
+      else
+        shard_config.save
+        @task = fork_redis_server
+        @status = :started
+      end
     end
 
     def stop
-      send_kill_signal
+      @task.stop
       @status = :stopped
+    end
+
+    def alive?
+      @task && @task.running?
     end
 
     protected
 
-    def alive?
-      @pid && File.exist?("/proc/#{@pid}")
-    end
-
     def fork_redis_server
-      spawn(shard_config.redis_path, shard_config.config_file_name)
-    end
-
-    def send_kill_signal
-      system("kill -QUIT #{pid}")
+      Daemons.call(:multiple => true) do
+        exec(shard_config.redis_path, shard_config.config_file_name)
+      end
     end
 
   end
