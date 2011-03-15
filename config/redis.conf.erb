@@ -20,18 +20,16 @@ loglevel notice
 
 databases 2048
 
-save 900 1
-save 300 10
-save 60 10000
+# save 900 1
+# save 300 10
+# save 60 10000
 
 rdbcompression yes
 
 # maxclients 128
 # maxmemory <bytes>
 
-appendonly no
-
-# The name of the append only file (default: "appendonly.aof")
+appendonly yes
 
 # appendfsync always
 appendfsync everysec
