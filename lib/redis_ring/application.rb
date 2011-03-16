@@ -2,16 +2,20 @@ module RedisRing
 
   class Application
 
-    attr_reader :shards, :configuration, :process_manager
+    attr_reader :shards, :configuration, :process_manager, :zookeeper_observer, :master
 
     def initialize(configuration)
       @configuration = configuration
       @process_manager = ProcessManager.new
+      @master = Master.new
+      @zookeeper_observer = ZookeeperObserver.new(configuration, master)
       @shards = {}
     end
 
     def start
       self.stop
+
+      @zookeeper_observer.run
 
       @configuration.ring_size.times do |shard_number|
         shard_conf = ShardConfig.new(shard_number, configuration)
@@ -27,6 +31,7 @@ module RedisRing
 
     def stop
       @process_manager.halt
+      @zookeeper_observer.halt
 
       @shards.each do |shard_no, shard|
         @process_manager.stop_shard(shard)

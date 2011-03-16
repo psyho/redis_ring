@@ -7,7 +7,7 @@ module RedisRing
   class Configuration
 
     PARAMETERS = [:host_name, :base_port, :ring_size, :redis_path, :redis_config_template_path,
-      :total_vm_size, :base_directory, :password, :total_max_memory, :vm_page_size]
+      :total_vm_size, :base_directory, :password, :total_max_memory, :vm_page_size, :zookeeper_address]
 
     attr_reader *PARAMETERS
 
@@ -50,6 +50,7 @@ module RedisRing
       self.base_directory ||= "/var/lib/redis"
       self.total_max_memory ||= 1024 * 1024 * 1024 # 1GB
       self.vm_page_size ||= 32
+      self.zookeeper_address ||= "localhost:2181"
     end
 
     def validate!
