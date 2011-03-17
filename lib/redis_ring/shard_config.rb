@@ -74,6 +74,14 @@ module RedisRing
       file('db_files', "shard-#{shard_number}.aof")
     end
 
+    def db_mtime
+      mtime(db_file_name)
+    end
+
+    def aof_mtime
+      mtime(aof_file_name)
+    end
+
     def password
       configuration.password
     end
@@ -86,6 +94,12 @@ module RedisRing
 
     def file(*parts)
       File.join('..', '..', *parts)
+    end
+
+    def mtime(relative_path)
+      path = File.expand_path(relative_path, working_directory)
+      return nil unless File.exist?(path)
+      return File.mtime(path).to_i
     end
 
   end

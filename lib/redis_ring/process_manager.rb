@@ -4,19 +4,24 @@ module RedisRing
 
   class ProcessManager
 
+    include RedisRing::BackgroundThread
+
     def initialize
       @shards = {}
     end
 
-    def run
-      @continue_running = true
-      Thread.new do
-        monitor_processes_loop
-      end
+    def do_work
+      monitor_processes
+      sleep(1)
     end
 
-    def halt
-      @continue_running = false
+    def after_halt
+      shards.each do |shard_no, shard|
+        if shard.alive?
+          puts "Stopping shard #{shard_no}"
+          shard.stop
+        end
+      end
     end
 
     def start_shard(shard)
@@ -25,8 +30,6 @@ module RedisRing
       end
 
       shards[shard.shard_number] = shard
-
-      shard.start
     end
 
     def stop_shard(shard)
@@ -38,15 +41,12 @@ module RedisRing
 
     attr_reader :shards
 
-    def monitor_processes_loop
-      while(@continue_running) do
-        shards.each do |shard_no, shard|
-          unless shard.alive?
-            puts "Restarting shard #{shard_no}"
-            shard.start
-          end
+    def monitor_processes
+      shards.each do |shard_no, shard|
+        unless shard.alive?
+          puts "Restarting shard #{shard_no}"
+          shard.start
         end
-        sleep(1)
       end
     end
 

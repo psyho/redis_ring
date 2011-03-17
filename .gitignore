@@ -1,4 +1,6 @@
 pkg/*
+tmp/*
 *.gem
 .bundle
 .rvmrc
+tags
