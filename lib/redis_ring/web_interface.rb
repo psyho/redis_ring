@@ -1,17 +1,42 @@
 module RedisRing
 
-  class WebInterface < Sinatra::Base
+  class WebInterfaceRunner
 
-    def application
-      Application.instance
+    include  RedisRing::BackgroundThread
+
+    attr_reader :master, :slave
+
+    def initialize(port, master, slave)
+      @port = port
+      @master = master
+      @slave = slave
     end
 
+    def do_work
+      handler = Rack::Handler.get("webrick")
+      handler.run(WebInterface, :Port => @port, :master => @master, :slave => @slave) do |server|
+        @server = server
+        WebInterface.set :master, master
+        WebInterface.set :slave, slave
+        WebInterface.set :running, true
+      end
+    end
+
+    def halt
+      super
+      @server.stop if @server
+    end
+
+  end
+
+  class WebInterface < Sinatra::Base
+
     def master
-      application.master
+      self.class.master
     end
 
     def slave
-      application.slave
+      self.class.slave
     end
 
     get "/" do
@@ -41,6 +66,10 @@ module RedisRing
     post "/slave/stop_shard/:shard_no" do
       slave.stop_shard(params[:shard_no].to_i)
       "OK"
+    end
+
+    class << self
+      attr_accessor :master, :slave
     end
 
   end

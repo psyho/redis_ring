@@ -42,8 +42,9 @@ USAGE
     def start(config_file = nil)
       config = config_file ? Configuration.from_yml_file(config_file) : Configuration.new
 
-      Application.instance = Application.new(config)
-      Application.instance.start
+      app = Application.new(config)
+      app.start
+      app.wait
     end
 
   end

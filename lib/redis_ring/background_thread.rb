@@ -16,7 +16,7 @@ module RedisRing
 
       @continue_running = true
 
-      Thread.new do
+      return Thread.new do
         begin
           while continue_running?
             do_work

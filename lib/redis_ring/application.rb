@@ -17,32 +17,35 @@ module RedisRing
       @master = Master.new(zookeeper_connection, config.ring_size, node_provider)
       @slave = Slave.new(configuration, master_rpc, process_manager)
       @zookeeper_observer = ZookeeperObserver.new(zookeeper_connection, master, slave)
+      @web_interface_runner = WebInterfaceRunner.new(config.base_port, master, slave)
     end
 
     def start
       self.stop
 
-      web_thread = Thread.new do
-        WebInterface.run!(:port => configuration.base_port)
-        Application.instance.stop
-      end
+      @web_thread = @web_interface_runner.run
 
       @zookeeper_connection.connect
       @slave.node_id = @zookeeper_connection.current_node
 
-      @zookeeper_observer.run
-      @process_manager.run
+      @zookeeper_thread = @zookeeper_observer.run
+      @pm_thread = @process_manager.run
 
-      web_thread.join
+      [:INT, :TERM, :QUIT].each do |sig|
+        trap(sig) { self.stop }
+      end
+    end
+
+    def wait
+      @pm_thread.join if @pm_thread
+      @zookeeper_thread.join if @zookeeper_thread
+      @web_thread.join if @web_thread
     end
 
     def stop
       @process_manager.halt
       @zookeeper_observer.halt
-    end
-
-    class << self
-      attr_accessor :instance
+      @web_interface_runner.halt
     end
 
   end
