@@ -1,0 +1,2 @@
+class FakeNodeProvider
+end

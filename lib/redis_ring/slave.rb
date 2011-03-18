@@ -48,6 +48,8 @@ module RedisRing
 
     def stop_shard(shard_number)
       puts "STOPPING SHARD #{shard_number}"
+      shard = running_shards[shard_number]
+      return unless shard
       process_manager.stop_shard(shard)
       running_shards.delete(shard_number)
     end

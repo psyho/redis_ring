@@ -68,7 +68,7 @@ module RedisRing
       best_candidates_timestamps = Hash.new(0)
 
       nodes.each do |node_id, node|
-        node.running_shards.each do |shard_no|
+        node.running_shards.dup.each do |shard_no|
           if running_shards.key?(shard_no)
             node.stop_shard(shard_no)
           else
@@ -85,12 +85,15 @@ module RedisRing
       end
 
       offline_shards = (0...ring_size).to_a - running_shards.keys
-      shards_per_node = (1.0 * ring_size / nodes.size).ceil
+      shards_per_node = (1.0 * ring_size / nodes.size).floor
+      rest = ring_size - shards_per_node * nodes.size
 
       nodes.each do |node_id, node|
         next unless node.joined?
         break if offline_shards.empty?
-        (shards_per_node - node.running_shards.size).times do
+        count_to_assign = shards_per_node - node.running_shards.size
+        count_to_assign += 1 if node_ids.index(node_id) < rest
+        count_to_assign.times do
           shard_no = offline_shards.shift
           break unless shard_no
           node.start_shard(shard_no)

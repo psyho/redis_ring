@@ -5,6 +5,10 @@ module RedisRing
     attr_reader :shard_number, :configuration
 
     def initialize(shard_number, configuration)
+      unless shard_number >= 0 && shard_number < configuration.ring_size
+        raise ArgumentError.new("shard number #{shard_number} must be between 0 and #{configuration.ring_size - 1}")
+      end
+
       @shard_number = shard_number
       @configuration = configuration
     end
