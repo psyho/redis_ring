@@ -140,4 +140,35 @@ describe RedisRing::Master do
 
   end
 
+  describe :status do
+    before(:each) do
+      @builder = ClusterBuilder.new do |b|
+        b.node("node0").host("a.example.com").port(6400)
+        b.node("node1").host("b.example.com").port(6400)
+      end
+
+      @master = RedisRing::Master.new(@builder.fake_connection, 8, @builder.fake_provider)
+      @master.became_master
+      @master.nodes_changed(@builder.node_ids)
+    end
+
+    it "should return the ring_size" do
+      @master.status[:ring_size].should == 8
+    end
+
+    it "should return the shards" do
+      @master.status[:shards].should == {
+        0 => { :host => "a.example.com", :port => 6401, :status => :running },
+        1 => { :host => "a.example.com", :port => 6402, :status => :running },
+        2 => { :host => "a.example.com", :port => 6403, :status => :running },
+        3 => { :host => "a.example.com", :port => 6404, :status => :running },
+        4 => { :host => "b.example.com", :port => 6405, :status => :running },
+        5 => { :host => "b.example.com", :port => 6406, :status => :running },
+        6 => { :host => "b.example.com", :port => 6407, :status => :running },
+        7 => { :host => "b.example.com", :port => 6408, :status => :running }
+      }
+    end
+
+  end
+
 end

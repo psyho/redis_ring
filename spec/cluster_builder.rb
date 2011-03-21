@@ -75,6 +75,10 @@ class ClusterBuilder
       node = @cluster_builder.node(node_id).get
       return {"host" => node.host, "port" => node.port}
     end
+
+    def update_status(status)
+      @status = status
+    end
   end
 
   class NodeBuilder

@@ -99,12 +99,35 @@ module RedisRing
           node.start_shard(shard_no)
         end
       end
+
+      zookeeper_connection.update_status(status)
+    end
+
+    def status
+      {
+        :ring_size => ring_size,
+        :shards => shards
+      }
     end
 
     protected
 
     attr_reader :node_ids
     attr_accessor :nodes
+
+    def shards
+      running_shards = {}
+      nodes.each do |node_id, node|
+        node.running_shards.each do |shard_no|
+          running_shards[shard_no] = {
+            :host => node.host,
+            :port => node.port + shard_no + 1,
+            :status => :running
+          }
+        end
+      end
+      return running_shards
+    end
 
     def update_node_statuses
       self.nodes ||= {}

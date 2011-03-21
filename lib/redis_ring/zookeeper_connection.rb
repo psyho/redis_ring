@@ -30,6 +30,10 @@ module RedisRing
       return data ? JSON.parse(data) : nil
     end
 
+    def update_status(status)
+      zookeeper.set(:path => "#{base_path}/status", :data => status.to_json)
+    end
+
     def connected?
       @connected
     end

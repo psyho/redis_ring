@@ -9,17 +9,19 @@ module RedisRing
     end
 
     def new(host, port)
-      Node.new(slave_rpc.connection(host, port))
+      Node.new(slave_rpc.connection(host, port), host, port)
     end
 
   end
 
   class Node
 
-    attr_reader :slave_rpc
+    attr_reader :slave_rpc, :host, :port
 
-    def initialize(slave_rpc)
+    def initialize(slave_rpc, host, port)
       @slave_rpc = slave_rpc
+      @host = host
+      @port = port
     end
 
     def update_status!
