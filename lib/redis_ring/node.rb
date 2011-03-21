@@ -25,8 +25,8 @@ module RedisRing
     def update_status!
       status_hash = slave_rpc.status
       @joined = status_hash["joined"]
-      @running_shards = status_hash["running_shards"]
-      @available_shards = status_hash["available_shards"]
+      @running_shards = status_hash["running_shards"] || []
+      @available_shards = keys_to_i(status_hash["available_shards"] || {})
     end
 
     def joined?
@@ -40,7 +40,7 @@ module RedisRing
 
     def stop_shard(shard_number)
       running_shards.delete(shard_number)
-      slave_rpc.stop(shard_number)
+      slave_rpc.stop_shard(shard_number)
     end
 
     def running_shards
@@ -49,6 +49,14 @@ module RedisRing
 
     def available_shards
       @available_shards ||= {}
+    end
+
+    protected
+
+    def keys_to_i(hash)
+      result = {}
+      hash.each { |key, val| result[key.to_i] = val }
+      return result
     end
 
   end

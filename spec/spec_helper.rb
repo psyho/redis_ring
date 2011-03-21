@@ -13,6 +13,7 @@ def require_fake(name)
 end
 
 require_fake 'master_rpc'
+require_fake 'slave_rpc'
 require_fake 'process_manager'
 require_fake 'zookeeper_connection'
 require_fake 'node_provider'
