@@ -31,7 +31,12 @@ module RedisRing
     end
 
     def update_status(status)
-      zookeeper.set(:path => "#{base_path}/status", :data => status.to_json)
+      status_path = "/cluster_status"
+      if zookeeper.stat(:path => status_path)[:stat].exists
+        zookeeper.set(:path => status_path, :data => status.to_json)
+      else
+        zookeeper.create(:path => status_path, :data => status.to_json)
+      end
     end
 
     def connected?
