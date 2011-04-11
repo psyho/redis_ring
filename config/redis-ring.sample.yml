@@ -1,3 +1,7 @@
+# You can have multiple clusters running in the same zookeeper
+# by providing different cluster names
+cluster_name: redis-ring
+
 # By default RedisRing tries to guess the local IP address
 # setting host_name should be necessary only if that is not possible
 #host_name: localhost

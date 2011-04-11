@@ -4,12 +4,12 @@ module RedisRing
 
     attr_reader :current_node
 
-    def initialize(host_name, base_port, zookeeper_address)
+    def initialize(cluster_name, host_name, base_port, zookeeper_address)
       @host_name = host_name
       @base_port = base_port
       @zookeeper_address = zookeeper_address
       @connected = false
-      @base_path = "/nodes"
+      @base_path = "/#{cluster_name}"
       @mutex = Mutex.new
     end
 

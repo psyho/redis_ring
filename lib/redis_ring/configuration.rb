@@ -6,7 +6,7 @@ module RedisRing
 
   class Configuration
 
-    PARAMETERS = [:host_name, :base_port, :ring_size, :redis_path, :redis_config_template_path,
+    PARAMETERS = [:cluster_name, :host_name, :base_port, :ring_size, :redis_path, :redis_config_template_path,
       :total_vm_size, :base_directory, :password, :total_max_memory, :vm_page_size, :zookeeper_address]
 
     attr_reader *PARAMETERS
@@ -41,6 +41,7 @@ module RedisRing
     end
 
     def set_defaults
+      self.cluster_name ||= "redis-ring"
       self.host_name ||=  guess_host_name
       self.base_port ||= 6400
       self.ring_size ||= 32

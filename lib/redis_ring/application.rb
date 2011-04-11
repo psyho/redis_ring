@@ -11,7 +11,8 @@ module RedisRing
       @master_rpc = MasterRPC.new(http_client)
       @slave_rpc = SlaveRPC.new(http_client)
       @node_provider = NodeProvider.new(slave_rpc)
-      @zookeeper_connection = ZookeeperConnection.new(config.host_name,
+      @zookeeper_connection = ZookeeperConnection.new(config.cluster_name,
+                                                      config.host_name,
                                                       config.base_port,
                                                       config.zookeeper_address)
       @master = Master.new(zookeeper_connection, config.ring_size, node_provider)

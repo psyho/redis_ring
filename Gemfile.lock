@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    redis_ring (0.0.2)
+    redis_ring (0.1.1)
       daemons-mikehale
       json
       sinatra
