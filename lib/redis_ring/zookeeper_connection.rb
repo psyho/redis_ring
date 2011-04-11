@@ -31,7 +31,7 @@ module RedisRing
     end
 
     def update_status(status)
-      status_path = "/cluster_status"
+      status_path = "#{base_path}_cluster_status"
       if zookeeper.stat(:path => status_path)[:stat].exists
         zookeeper.set(:path => status_path, :data => status.to_json)
       else
